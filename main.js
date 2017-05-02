@@ -1,6 +1,7 @@
 var coordinates = []; //3-dimensional array holding pairs of coordinates defining each hex
 var centers = [];   // array to track the center points of the hexes
 var stopGradient=0; // switch for the gradient
+var stopText = 0; //switch for the text
 
 window.onload = function () {
     var canvas = document.getElementById("canvas");
@@ -20,23 +21,13 @@ window.onload = function () {
             centerX = centers[closestHexIndex][0];
             centerY = centers[closestHexIndex][1];
             drawGradient(centerX, centerY, center * 0.27631578947368421052631578947368);
-            ctx.font = center/12 + "px 'Vesper Libre'";
-            ctx.fillStyle = "black";
-            ctx.textAlign = "center";
-            if (closestHexIndex == 4 || closestHexIndex == 5) { //since vertical alignment is a function of centerX
-                var verticalAlignment = 15
-            } else if (closestHexIndex == 0 || closestHexIndex == 3 || closestHexIndex == 6) {
-                var verticalAlignment = 30
-            } else if (closestHexIndex == 1 || closestHexIndex == 2) {
-                var verticalAlignment = 50
-            };
-            ctx.fillText(innerHexText(closestHexIndex),centerX,centerY+(centerX/verticalAlignment));
-            document.getElementById("canvas").style.cursor = "pointer";
-            writeQuote(closestHexIndex);
+            writeText(closestHexIndex, canvas, center, centerX, centerY);
+
         } else {
             center = calcCenter();
             drawAllHexes(center);
             stopGradient = 0;
+            stopText = 0;
             document.getElementById("canvas").style.cursor = "default";
             writeQuote(7);
         }
@@ -47,6 +38,9 @@ window.onload = function () {
     }, false);
 
     canvas.addEventListener('click', function(event) {
+        //var center = calcCenter();
+        //drawAllHexes(center);
+
         var pos = getMousePos(canvas, event);
 
         var x = pos.x,
@@ -249,6 +243,31 @@ function drawGradient (x, y, radius) {
     stopGradient = 1;
 }
 
+function writeText(closestHexIndex, canvas, center, centerX, centerY) {
+    if (stopText == 0) {
+        var ctx = canvas.getContext('2d');
+        ctx.font = center / 12 + "px 'Vesper Libre'";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+
+        if (closestHexIndex == 4 || closestHexIndex == 5) { //since vertical alignment is a function of centerX
+            var verticalAlignment = 15
+        } else if (closestHexIndex == 0 || closestHexIndex == 3 || closestHexIndex == 6) {
+            var verticalAlignment = 30
+        } else if (closestHexIndex == 1 || closestHexIndex == 2) {
+            var verticalAlignment = 50
+        }
+
+        for (var i = 0; i < 6; i++) { //make the text dark enough to read
+            ctx.fillText(innerHexText(closestHexIndex), centerX, centerY + (centerX / verticalAlignment));
+        }
+
+        document.getElementById("canvas").style.cursor = "pointer";
+        writeQuote(closestHexIndex);
+    }
+    stopText = 1;
+}
+
 function writeQuote (shape) {
     switch (shape) {
         case 0:
@@ -309,5 +328,3 @@ function getMousePos(canvas, evt) {
         y: evt.clientY - rect.top
     };
 }
-
-
