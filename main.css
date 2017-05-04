@@ -96,47 +96,14 @@ textarea {
    ========================================================================== */
 
 #wrapper {
-    float: left;
-    width: 50%;
+    max-width: 960px;
+    margin: 0 auto 0 auto;
 }
 
-
-
-p.body {
-    font-family: 'Vesper Libre', serif;
-    font-size: 37px;
-    line-height: 1.2;
-}
-
-#output-div {
-    width: 50%;
-    float: left;
-    padding-top: 50px;
-}
-
-@media (max-width: 820px) {
-    p.body {
-        font-size: 25px;
-    }
-}
-
-@media (max-width: 520px) {
-    p.body {
-        font-size: 17px;
-    }
-}
-
-@media (max-width: 420px) {
-   #output-div {
-       float: none;
-       clear: both;
-       width: 100%;
-       padding-top: 0;
-   }
-    #wrapper {
-        float: none;
-        width: 100%;
-    }
+#canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
 }
 
 
