@@ -1,75 +1,112 @@
 var gradientSwitch = 0, //so we only draw a gradient once per shape rollover
+	pointerSwitch = 0,
     outerPoints = [], // outer points of each hexagon
     centerPoints = [], // center points of each hexagon
     center; // center of the whole figure
 
 window.onload = function () {
-    var canvas = document.getElementById("canvas");
-    center = calcCenter();
+    WebFont.load({
+        google: {
+            families: ['Vesper+Libre']
+        },
+        active: function () {
+            $(document).ready(function () {
 
-    //set the shapes up and store their outer points and centers
-    var allCoordinates = drawAll(canvas, center);
-    outerPoints = allCoordinates.coordinates;
-    centerPoints = allCoordinates.centers;
+                initial();
 
-    // SET MOUSE EVENTS
-    canvas.addEventListener('mousemove', mouseRollOver, false);
-    canvas.addEventListener('click', mouseClick, false);
-
-    // MOUSE EVENT FUNCTIONS
-
-    function mouseRollOver() {
-        var pos = getMousePos(canvas, event);
-        var x = pos.x,
-            y = pos.y;
-        var centerX, centerY;
-        var closestHexIndex = closest([x, y], outerPoints);
-        if (closestHexIndex < 7) {
-            centerX = centerPoints[closestHexIndex][0];
-            centerY = centerPoints[closestHexIndex][1];
-            document.getElementById("canvas").style.cursor = "pointer";
-            if (!gradientSwitch) {
-                drawGradient(canvas, centerX, centerY, center * 0.27631578947368421052631578947368);
-                gradientSwitch = 1;
-                writeAllText(canvas, center, centerPoints);
-            }
-        } else {
-            drawAll(canvas, center);
-            gradientSwitch = 0;
-            document.getElementById("canvas").style.cursor = "default";
+            });
         }
-    }
+    });
+	
+	var initial = function () {
+		var canvas = document.getElementById("canvas");
+		center = calcCenter();
 
-    function mouseClick() {
-         var pos = getMousePos(canvas, event);
+		//set the shapes up and store their outer points and centers
+		var allCoordinates = drawAll(canvas, center);
+		outerPoints = allCoordinates.coordinates;
+		centerPoints = allCoordinates.centers;
+		
+		var currentShape = {
+			currentShapeInternal: 7, //assume we're not on a shape when the page loads
+			currentShapeListener: function(val) {},
+			set current(val) {
+				if (this.currentShapeInternal != val) {
+					this.currentShapeInternal = val;
+					this.currentShapeListener(val);
+					
+				}
+			}, 
+			get current() {
+				return this.currentShapeInternal;
+			},
+			registerListener: function(listener) {
+				this.currentShapeListener = listener; 
+			}			
+		}
+		
+		currentShape.registerListener(function(val) {
+			drawAll(canvas, center);			
+			if (val < 7) {
+				var centerX = centerPoints[val][0];
+				var centerY = centerPoints[val][1];
+				document.getElementById("canvas").style.cursor = "pointer";	
+				drawGradient(canvas, centerX, centerY, center * 0.27631578947368421052631578947368);
+				writeAllText(canvas, center, centerPoints);
+			} else {
+				drawAll(canvas, center);
+				document.getElementById("canvas").style.cursor = "default";	
+			}
+		});
 
-         var x = pos.x,
-         y = pos.y;
+		// SET MOUSE EVENTS
+		canvas.addEventListener('mousemove', mouseRollOver, false);
+		canvas.addEventListener('click', mouseClick, false);
 
-         switch (closest([x, y], outerPoints)) {
-             case 0: // orange
-             writeQuote(0);
-             break;
-             case 1:	// green
-             writeQuote(1);
-             break;
-             case 2:	// violet
-             window.open("http://lapis-mercurii.org/qbl","_self")
-             break;
-             case 3:	// indigo
-             window.open("http://luceno.org","_self")
-             break;
-             case 4:	// red
-             window.open("http://lapis-mercurii.org/elements","_self")
-             break;
-             case 5: // yellow
-             writeQuote(5);
-             break;
-             case 6:	// blue
-             writeQuote(6);
-         }
-     }
+		// MOUSE EVENT FUNCTIONS
 
+		function mouseRollOver (event) {
+			var pos = getMousePos(canvas, event);
+			var x = pos.x,
+				y = pos.y;
+			//var centerX, centerY;
+			currentShape.current = closest([x, y], outerPoints);
+								
+				
+			//} else if (closestHexIndex == 7) {
+			//	drawAll(canvas, center);
+			//	gradientSwitch = 0;
+			//	document.getElementById("canvas").style.cursor = "default";					
+			//}
+		}
+
+		function mouseClick(event) {
+			 var pos = getMousePos(canvas, event);
+
+			 var x = pos.x,
+			 y = pos.y;
+
+			 switch (closest([x, y], outerPoints)) {
+				 case 0: // orange
+				 break;
+				 case 1:	// green
+				 window.open("http://lapis-mercurii.org/resume/Luceno-resume.pdf","_self")
+				 break;
+				 case 2:	// violet
+				 window.open("http://lapis-mercurii.org/qbl","_self")
+				 break;
+				 case 3:	// indigo
+				 window.open("http://luceno.org","_self")
+				 break;
+				 case 4:	// red
+				 window.open("http://lapis-mercurii.org/elements","_self")
+				 break;
+				 case 5: // yellow
+				 break;
+				 case 6:	// blue
+			 }
+		 }
+	}
 
 }//end of onload
 
@@ -298,37 +335,9 @@ function writeText(closestHexIndex, canvas, center, centerX, centerY, white) {
         }
     }
 
-    document.getElementById("canvas").style.cursor = "pointer";
-    //writeQuote(closestHexIndex);
+    
 }
 
-function writeQuote (shape) {
-    switch (shape) {
-        case 0:
-            document.getElementById("output").innerHTML = "Coming soon...";
-            break;
-        case 1:
-            document.getElementById("output").innerHTML = "Coming soon...";
-            break;
-        case 2:
-            document.getElementById("output").innerHTML = "Interactive Tree of Life application.";
-            break;
-        case 3:
-            document.getElementById("output").innerHTML = "My genealogy page.";
-            break;
-        case 4:
-            document.getElementById("output").innerHTML = "An interactive representation of magical rituals.";
-            break;
-        case 5:
-            document.getElementById("output").innerHTML = "Coming soon...";
-            break;
-        case 6:
-            document.getElementById("output").innerHTML = "Coming soon...";
-            break;
-        case 7:
-            document.getElementById("output").innerHTML = "";
-    }
-}
 
 function innerHexText(index) {
     switch (index) {
@@ -345,7 +354,7 @@ function innerHexText(index) {
             return "Memory";
             break;
         case 4:
-            return "Ritual";
+            return "Action";
             break;
         case 5:
             return "Words";
@@ -363,6 +372,7 @@ function closest (point, shapes) {
             return i; //returns the index of the shape it's inside of
         }
     }
+	return 7;
 }
 
 function inside (point, shape) {
