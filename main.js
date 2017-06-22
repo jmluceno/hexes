@@ -53,9 +53,11 @@ window.onload = function () {
 				document.getElementById("canvas").style.cursor = "pointer";	
 				drawGradient(canvas, centerX, centerY, center * 0.27631578947368421052631578947368);
 				writeAllText(canvas, center, centerPoints);
+				writeDescription(val);
 			} else {
 				drawAll(canvas, center);
 				document.getElementById("canvas").style.cursor = "default";	
+				writeDescription(val);
 			}
 		});
 
@@ -69,15 +71,8 @@ window.onload = function () {
 			var pos = getMousePos(canvas, event);
 			var x = pos.x,
 				y = pos.y;
-			//var centerX, centerY;
 			currentShape.current = closest([x, y], outerPoints);
-								
-				
-			//} else if (closestHexIndex == 7) {
-			//	drawAll(canvas, center);
-			//	gradientSwitch = 0;
-			//	document.getElementById("canvas").style.cursor = "default";					
-			//}
+			
 		}
 
 		function mouseClick(event) {
@@ -345,7 +340,7 @@ function innerHexText(index) {
             return "About";
             break;
         case 1:
-            return "Aspirations";
+            return "Aspiration";
             break;
         case 2:
             return "Q B L";
@@ -362,6 +357,34 @@ function innerHexText(index) {
         case 6:
             return "Reflection";
     }
+}
+
+function writeDescription(hex) {
+	switch (hex) {
+		case 0:
+			document.getElementById("output").innerHTML = "The Lapis Mercurii hexagon menu combines my interest in the Hermetic tradition and JavaScript. Each hexagon represents one of the planetary sephira on the Tree of Life. Each brings you to a different project when you click on it.";
+			break;
+		case 1:
+			document.getElementById("output").innerHTML = "My résumé.";
+			break;
+		case 2:
+			document.getElementById("output").innerHTML = "QBL is an interactive Tree of Life website created with jQuery.";
+			break;
+		case 3:
+			document.getElementById("output").innerHTML = "The Luceno Origins Project is my genealogy website on a custom WordPress template.";
+			break;
+		case 4:
+			document.getElementById("output").innerHTML = "Elements is an interactive page utilizing jQuery and HTML canvas.";
+			break;
+		case 5:
+			document.getElementById("output").innerHTML = "Coming soon...";
+			break;	
+		case 6:
+			document.getElementById("output").innerHTML = "Coming soon...";
+			break;
+		case 7:
+			document.getElementById("output").innerHTML = "";			
+	}
 }
 
 // RAY CASTING/WHERE AM I? FUNCTIONS
